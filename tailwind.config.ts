@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        // Computer Vision specific colors
+        "detection-box": "hsl(var(--detection-box))",
+        "detection-label": "hsl(var(--detection-label))",
+        "confidence-high": "hsl(var(--confidence-high))",
+        "confidence-medium": "hsl(var(--confidence-medium))",
+        "confidence-low": "hsl(var(--confidence-low))",
       },
       borderRadius: {
         lg: "var(--radius)",
