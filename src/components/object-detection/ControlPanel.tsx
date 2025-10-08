@@ -68,51 +68,69 @@ export const ControlPanel = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="gradient-card border-border">
+        <Card className="gradient-card border-border hover-lift">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">Camera Controls</CardTitle>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🎮</span>
+              <CardTitle className="text-lg">Camera Controls</CardTitle>
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button
-              onClick={onToggleCamera}
-              variant={isActive ? "destructive" : "default"}
-              className="w-full h-12 text-base font-semibold transition-smooth shadow-glow"
-              size="lg"
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
             >
-              {isActive ? (
-                <>
-                  <Square className="w-5 h-5 mr-2" />
-                  Stop Detection
-                </>
-              ) : (
-                <>
-                  <Play className="w-5 h-5 mr-2" />
-                  Start Detection
-                </>
-              )}
-            </Button>
+              <Button
+                onClick={onToggleCamera}
+                variant={isActive ? "destructive" : "default"}
+                className="w-full h-12 text-base font-semibold transition-bounce shadow-glow hover:shadow-xl ripple"
+                size="lg"
+              >
+                {isActive ? (
+                  <>
+                    <Square className="w-5 h-5 mr-2" />
+                    Stop Detection
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-5 h-5 mr-2" />
+                    Start Detection ✨
+                  </>
+                )}
+              </Button>
+            </motion.div>
             
             <div className="grid grid-cols-2 gap-2">
-              <Button
-                onClick={onCaptureImage}
-                disabled={!isActive}
-                variant="secondary"
-                className="h-10 transition-smooth"
-                size="default"
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <Camera className="w-4 h-4 mr-2" />
-                Capture
-              </Button>
+                <Button
+                  onClick={onCaptureImage}
+                  disabled={!isActive}
+                  variant="secondary"
+                  className="h-10 w-full transition-bounce ripple"
+                  size="default"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  Capture 📸
+                </Button>
+              </motion.div>
               
-              <Button
-                onClick={handleImageUpload}
-                variant="outline"
-                className="h-10 transition-smooth"
-                size="default"
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
               >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload
-              </Button>
+                <Button
+                  onClick={handleImageUpload}
+                  variant="outline"
+                  className="h-10 w-full transition-bounce ripple"
+                  size="default"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Upload 🖼️
+                </Button>
+              </motion.div>
             </div>
             
             <input
@@ -133,20 +151,25 @@ export const ControlPanel = ({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <Card className="gradient-card border-border">
+          <Card className="gradient-card border-border hover-lift">
             <CardHeader className="pb-3">
               <CardTitle className="text-lg flex items-center justify-between">
-                <span>Captured Images ({capturedImages.length})</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">📷</span>
+                  <span>Captures ({capturedImages.length})</span>
+                </div>
                 {capturedImages.length > 1 && (
-                  <Button
-                    onClick={handleDownloadAll}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    <Download className="w-3 h-3 mr-1" />
-                    All
-                  </Button>
+                  <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                    <Button
+                      onClick={handleDownloadAll}
+                      variant="outline"
+                      size="sm"
+                      className="text-xs ripple"
+                    >
+                      <Download className="w-3 h-3 mr-1" />
+                      All
+                    </Button>
+                  </motion.div>
                 )}
               </CardTitle>
             </CardHeader>
@@ -157,30 +180,34 @@ export const ControlPanel = ({
                     key={index}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
+                    whileHover={{ scale: 1.02, x: 4 }}
                     transition={{ delay: index * 0.05 }}
-                    className="flex items-center gap-3 p-2 rounded-lg bg-secondary/20 border border-border/50 hover:bg-secondary/30 transition-smooth"
+                    className="flex items-center gap-3 p-2 rounded-xl bg-secondary/20 border border-border/50 hover:bg-secondary/40 hover:shadow-soft transition-all duration-300"
                   >
-                    <img
+                    <motion.img
+                      whileHover={{ scale: 1.1 }}
                       src={imageData}
                       alt={`Capture ${index + 1}`}
-                      className="w-12 h-12 rounded object-cover border border-border"
+                      className="w-12 h-12 rounded-lg object-cover border-2 border-primary/30 shadow-soft cursor-pointer"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium text-foreground truncate">
-                        Capture {index + 1}
+                        📸 Capture {index + 1}
                       </div>
                       <div className="text-xs text-muted-foreground">
                         {new Date().toLocaleTimeString()}
                       </div>
                     </div>
-                    <Button
-                      onClick={() => handleDownloadImage(imageData, index)}
-                      variant="ghost"
-                      size="sm"
-                      className="shrink-0"
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
+                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                      <Button
+                        onClick={() => handleDownloadImage(imageData, index)}
+                        variant="ghost"
+                        size="sm"
+                        className="shrink-0 ripple"
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -195,31 +222,49 @@ export const ControlPanel = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="gradient-card border-border">
+        <Card className="gradient-card border-border hover-lift">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg">How to Use</CardTitle>
+            <div className="flex items-center gap-2">
+              <span className="text-xl">💡</span>
+              <CardTitle className="text-lg">Quick Guide</CardTitle>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>
-              <div>Click "Start Detection" to begin real-time object detection</div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>
-              <div>Upload an image or use your webcam for detection</div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>
-              <div>Use "Capture" to save detections with bounding boxes</div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>
-              <div>Green boxes indicate high confidence detections</div>
-            </div>
-            <div className="flex items-start gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0"></div>
-              <div>Toggle dark/light mode using the button in the header</div>
-            </div>
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
+            <motion.div 
+              whileHover={{ x: 4 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-lg shrink-0">✨</span>
+              <div>Click "Start Detection" to begin the magic</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ x: 4 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-lg shrink-0">📸</span>
+              <div>Upload an image or use your webcam</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ x: 4 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-lg shrink-0">🎯</span>
+              <div>Watch objects get detected with emoji labels</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ x: 4 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-lg shrink-0">💾</span>
+              <div>Capture & save your favorite moments</div>
+            </motion.div>
+            <motion.div 
+              whileHover={{ x: 4 }}
+              className="flex items-start gap-3"
+            >
+              <span className="text-lg shrink-0">🌗</span>
+              <div>Toggle theme for comfy viewing</div>
+            </motion.div>
           </CardContent>
         </Card>
       </motion.div>

@@ -3,6 +3,7 @@ import * as tf from "@tensorflow/tfjs";
 import "@tensorflow/tfjs-backend-webgl";
 import * as cocoSsd from "@tensorflow-models/coco-ssd";
 import { toast } from "sonner";
+import { getObjectEmoji } from "@/utils/objectEmojis";
 
 interface Detection {
   bbox: [number, number, number, number];
@@ -109,44 +110,81 @@ export const ObjectDetectionCanvas = ({
     }
   }, []);
 
-  // Draw bounding boxes and labels
+  // Draw bounding boxes and labels with emojis
   const drawDetections = useCallback((ctx: CanvasRenderingContext2D, detections: Detection[]) => {
     detections.forEach((detection) => {
       const [x, y, width, height] = detection.bbox;
       const { class: className, score } = detection;
       
-      // Set stroke style based on confidence
+      // Set stroke style based on confidence with softer colors
       const confidence = score;
       let strokeColor: string;
-      if (confidence > 0.7) strokeColor = "hsl(120, 85%, 50%)"; // Green
-      else if (confidence > 0.5) strokeColor = "hsl(48, 100%, 50%)"; // Yellow
-      else strokeColor = "hsl(0, 84%, 60%)"; // Red
+      if (confidence > 0.7) strokeColor = "hsl(150, 70%, 60%)"; // Soft green
+      else if (confidence > 0.5) strokeColor = "hsl(40, 90%, 60%)"; // Soft yellow
+      else strokeColor = "hsl(10, 85%, 65%)"; // Soft red
       
-      // Draw bounding box
+      // Draw rounded bounding box
       ctx.strokeStyle = strokeColor;
       ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.setLineDash([]);
-      ctx.strokeRect(x, y, width, height);
+      
+      // Draw with rounded corners
+      const radius = 8;
+      ctx.beginPath();
+      ctx.moveTo(x + radius, y);
+      ctx.lineTo(x + width - radius, y);
+      ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+      ctx.lineTo(x + width, y + height - radius);
+      ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+      ctx.lineTo(x + radius, y + height);
+      ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+      ctx.lineTo(x, y + radius);
+      ctx.quadraticCurveTo(x, y, x + radius, y);
+      ctx.closePath();
       
       // Add glow effect
       ctx.shadowColor = strokeColor;
-      ctx.shadowBlur = 10;
-      ctx.strokeRect(x, y, width, height);
+      ctx.shadowBlur = 12;
+      ctx.stroke();
       ctx.shadowBlur = 0;
       
-      // Draw label background
-      const label = `${className} ${(confidence * 100).toFixed(0)}%`;
-      ctx.font = "bold 14px Inter, sans-serif";
-      const textMetrics = ctx.measureText(label);
-      const textWidth = textMetrics.width + 12;
-      const textHeight = 24;
+      // Get emoji for object
+      const emoji = getObjectEmoji(className);
       
+      // Draw label background with rounded corners
+      const label = `${emoji} ${className} ${(confidence * 100).toFixed(0)}%`;
+      ctx.font = "bold 15px Inter, sans-serif";
+      const textMetrics = ctx.measureText(label);
+      const textWidth = textMetrics.width + 20;
+      const textHeight = 28;
+      const labelRadius = 10;
+      
+      // Draw rounded label background
       ctx.fillStyle = strokeColor;
-      ctx.fillRect(x, y - textHeight, textWidth, textHeight);
+      ctx.beginPath();
+      ctx.moveTo(x + labelRadius, y - textHeight);
+      ctx.lineTo(x + textWidth - labelRadius, y - textHeight);
+      ctx.quadraticCurveTo(x + textWidth, y - textHeight, x + textWidth, y - textHeight + labelRadius);
+      ctx.lineTo(x + textWidth, y - labelRadius);
+      ctx.quadraticCurveTo(x + textWidth, y, x + textWidth - labelRadius, y);
+      ctx.lineTo(x + labelRadius, y);
+      ctx.quadraticCurveTo(x, y, x, y - labelRadius);
+      ctx.lineTo(x, y - textHeight + labelRadius);
+      ctx.quadraticCurveTo(x, y - textHeight, x + labelRadius, y - textHeight);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Add shadow to label
+      ctx.shadowColor = strokeColor;
+      ctx.shadowBlur = 8;
+      ctx.fill();
+      ctx.shadowBlur = 0;
       
       // Draw label text
-      ctx.fillStyle = "hsl(215, 28%, 9%)";
-      ctx.fillText(label, x + 6, y - 6);
+      ctx.fillStyle = "hsl(250, 24%, 9%)";
+      ctx.fillText(label, x + 10, y - 9);
     });
   }, []);
 
