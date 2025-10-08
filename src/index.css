@@ -69,6 +69,33 @@ All colors MUST be HSL.
     --sidebar-ring: 193 84% 57%;
   }
 
+  .light {
+    /* Light Theme */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 193 84% 47%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 193 84% 47%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 193 84% 47%;
+    --gradient-primary: linear-gradient(135deg, hsl(193 84% 47%), hsl(233 84% 57%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 40% 98%));
+    --shadow-glow: 0 0 30px hsl(193 84% 47% / 0.2);
+    --shadow-card: 0 4px 20px hsl(215 28% 4% / 0.1);
+  }
+
   .dark {
     /* Same as root for consistent dark theme */
     --background: 215 28% 7%;

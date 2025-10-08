@@ -23,11 +23,13 @@ export const ObjectDetectionCanvas = ({
 }: ObjectDetectionCanvasProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const modelRef = useRef<cocoSsd.ObjectDetection | null>(null);
   const animationFrameRef = useRef<number>();
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const lastTimeRef = useRef(performance.now());
   const frameCountRef = useRef(0);
   const fpsRef = useRef(0);
@@ -232,11 +234,47 @@ export const ObjectDetectionCanvas = ({
     };
   }, [stopWebcam]);
 
+  // Handle uploaded image
+  const processUploadedImage = useCallback(async (imageData: string) => {
+    if (!modelRef.current || !canvasRef.current || !imageRef.current) return;
+    
+    setUploadedImage(imageData);
+    imageRef.current.src = imageData;
+    
+    imageRef.current.onload = async () => {
+      if (!canvasRef.current || !imageRef.current) return;
+      
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+      
+      canvas.width = imageRef.current.width;
+      canvas.height = imageRef.current.height;
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(imageRef.current, 0, 0);
+      
+      try {
+        const predictions = await modelRef.current!.detect(imageRef.current);
+        const detections: Detection[] = predictions.map(prediction => ({
+          bbox: prediction.bbox,
+          class: prediction.class,
+          score: prediction.score
+        }));
+        
+        drawDetections(ctx, detections);
+        onDetection(detections, 0);
+      } catch (err) {
+        console.error("Detection error:", err);
+      }
+    };
+  }, [onDetection, drawDetections]);
+
   // Expose capture function to parent
   useEffect(() => {
-    // Store the capture function for external access
     (window as any).captureImage = handleCapture;
-  }, [handleCapture]);
+    (window as any).processUploadedImage = processUploadedImage;
+  }, [handleCapture, processUploadedImage]);
 
   if (error) {
     return (
@@ -257,6 +295,11 @@ export const ObjectDetectionCanvas = ({
         playsInline
         muted
         className="hidden"
+      />
+      <img
+        ref={imageRef}
+        className="hidden"
+        alt="Uploaded for detection"
       />
       <canvas
         ref={canvasRef}
